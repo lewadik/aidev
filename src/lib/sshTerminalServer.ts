@@ -217,7 +217,4 @@ export function stopTerminalServer() {
   }
 }
 
-// Auto-start server if this module is run directly
-if (require.main === module) {
-  startTerminalServer();
-}
+// In Next.js, this module is imported by API routes; no direct auto-start required.

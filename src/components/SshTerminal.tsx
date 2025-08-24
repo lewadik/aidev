@@ -21,7 +21,12 @@ const SshTerminal = () => {
     // Initialize WebSocket connection
     const connectWebSocket = () => {
       try {
-        wsRef.current = new WebSocket(`ws://localhost:3001`);
+        const wsUrl = (process.env.NEXT_PUBLIC_WS_URL as string) || (() => {
+          const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+          const path = (process.env.NEXT_PUBLIC_WS_PATH as string) || "/ws";
+          return `${protocol}://${window.location.host}${path}`;
+        })();
+        wsRef.current = new WebSocket(wsUrl);
         
         wsRef.current.onopen = () => {
           setConnected(true);
@@ -115,7 +120,12 @@ const SshTerminal = () => {
     setTimeout(() => {
       const connectWebSocket = () => {
         try {
-          wsRef.current = new WebSocket(`ws://localhost:3001`);
+          const wsUrl = (process.env.NEXT_PUBLIC_WS_URL as string) || (() => {
+          const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+          const path = (process.env.NEXT_PUBLIC_WS_PATH as string) || "/ws";
+          return `${protocol}://${window.location.host}${path}`;
+        })();
+        wsRef.current = new WebSocket(wsUrl);
           
           wsRef.current.onopen = () => {
             setConnected(true);

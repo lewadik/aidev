@@ -1,0 +1,30 @@
+# systemd service unit for running the app on Linux without Docker
+# Place at /etc/systemd/system/next-app.service, then:
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now next-app
+
+[Unit]
+Description=Next.js File Sharing App
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/aidev
+Environment=NODE_ENV=production
+# Set desired ports
+Environment=PORT=3000
+Environment=WS_PORT=3001
+# Optional: public WS URL (or use Nginx /ws path)
+# Environment=NEXT_PUBLIC_WS_URL=wss://your-domain.com/ws
+ExecStart=/usr/bin/npm run start
+Restart=always
+RestartSec=5
+User=www-data
+Group=www-data
+# Give write access to uploads
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p /opt/aidev/uploads
+ExecStartPre=/bin/chown -R www-data:www-data /opt/aidev/uploads
+
+[Install]
+WantedBy=multi-user.target
