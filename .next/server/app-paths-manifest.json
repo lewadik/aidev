@@ -1,0 +1,7 @@
+{
+  "/api/files/route": "app/api/files/route.js",
+  "/api/start-terminal-server/route": "app/api/start-terminal-server/route.js",
+  "/api/upload/route": "app/api/upload/route.js",
+  "/file-sharing/page": "app/file-sharing/page.js",
+  "/page": "app/page.js"
+}
