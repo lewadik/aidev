@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.env.local
+.env
+README.md
+TODO.md
+plan.md
+.vscode
+.DS_Store
+uploads/*
+!uploads/.gitkeep

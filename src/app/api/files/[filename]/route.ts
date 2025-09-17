@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile, unlink } from "fs/promises";
-import { existsSync } from "fs";
+import { getStorageProvider } from "@/lib/storage/factory";
 import path from "path";
 
 export async function GET(
@@ -9,13 +8,15 @@ export async function GET(
 ) {
   try {
     const filename = decodeURIComponent(params.filename);
-    const filepath = path.join(process.cwd(), "uploads", filename);
+    const storage = getStorageProvider();
 
-    if (!existsSync(filepath)) {
+    // Check if file exists
+    const exists = await storage.exists(filename);
+    if (!exists) {
       return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
 
-    const fileBuffer = await readFile(filepath);
+    const fileBuffer = await storage.download(filename);
     
     // Determine content type based on file extension
     const ext = path.extname(filename).toLowerCase();
@@ -52,6 +53,11 @@ export async function GET(
     });
   } catch (error) {
     console.error("Error downloading file:", error);
+    
+    if (error instanceof Error && error.message.includes('File not found')) {
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
+    }
+    
     return NextResponse.json(
       { error: "Failed to download file" },
       { status: 500 }
@@ -65,13 +71,15 @@ export async function DELETE(
 ) {
   try {
     const filename = decodeURIComponent(params.filename);
-    const filepath = path.join(process.cwd(), "uploads", filename);
+    const storage = getStorageProvider();
 
-    if (!existsSync(filepath)) {
+    // Check if file exists
+    const exists = await storage.exists(filename);
+    if (!exists) {
       return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
 
-    await unlink(filepath);
+    await storage.delete(filename);
 
     return NextResponse.json({ 
       success: true, 
@@ -79,6 +87,11 @@ export async function DELETE(
     });
   } catch (error) {
     console.error("Error deleting file:", error);
+    
+    if (error instanceof Error && error.message.includes('File not found')) {
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
+    }
+    
     return NextResponse.json(
       { error: "Failed to delete file" },
       { status: 500 }

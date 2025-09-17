@@ -1,4 +1,5 @@
 {
     "task.autoDetect": "off",
-    "typescript.tsc.autoDetect": "off"
+    "typescript.tsc.autoDetect": "off",
+    "kiroAgent.configureMCP": "Disabled"
 }

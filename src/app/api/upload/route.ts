@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { existsSync } from "fs";
+import { getStorageProvider } from "@/lib/storage/factory";
 import path from "path";
 
 export async function POST(request: NextRequest) {
@@ -12,27 +11,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // Ensure uploads directory exists
-    const uploadsDir = path.join(process.cwd(), "uploads");
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true });
-    }
-
     // Get file buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
     // Create safe filename
     const filename = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const filepath = path.join(uploadsDir, filename);
+    
+    // Get content type
+    const contentType = file.type || 'application/octet-stream';
 
-    // Write file
-    await writeFile(filepath, buffer);
+    // Upload using storage provider
+    const storage = getStorageProvider();
+    await storage.upload(filename, buffer, contentType);
 
     return NextResponse.json({ 
       success: true, 
       filename,
-      size: buffer.length 
+      size: buffer.length,
+      contentType
     });
 
   } catch (error) {

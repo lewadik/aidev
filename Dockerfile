@@ -20,13 +20,23 @@ RUN npm run build
 
 # ---------- Runner ----------
 FROM base AS runner
+
+# Create non-root user for security
+RUN groupadd --gid 1001 nodejs && \
+    useradd --uid 1001 --gid nodejs --shell /bin/bash --create-home nodejs
+
 # Copy production deps and build output
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.* ./
-COPY --from=builder /app/src ./src
+COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
+COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nodejs:nodejs /app/.next ./.next
+COPY --from=builder --chown=nodejs:nodejs /app/public ./public
+COPY --from=builder --chown=nodejs:nodejs /app/next.config.* ./
+
+# Create uploads directory with proper permissions
+RUN mkdir -p uploads && chown -R nodejs:nodejs uploads
+
+# Switch to non-root user
+USER nodejs
 
 # Environment
 ENV PORT=3000 \
