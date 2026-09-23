@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 
 const SshTerminal = () => {
   const [logs, setLogs] = useState<string[]>([
@@ -38,7 +37,7 @@ const SshTerminal = () => {
           setLogs(prev => [...prev, data]);
         };
 
-        wsRef.current.onerror = (error) => {
+        wsRef.current.onerror = () => {
           setLogs(prev => [...prev, "✗ Connection error. Using local terminal mode."]);
           setConnected(false);
         };
@@ -48,7 +47,8 @@ const SshTerminal = () => {
           setLogs(prev => [...prev, "✗ Connection closed"]);
         };
       } catch (error) {
-        setLogs(prev => [...prev, "✗ Failed to connect to WebSocket server"]);
+        const msg = error instanceof Error ? error.message : String(error);
+        setLogs(prev => [...prev, `✗ Failed to connect to WebSocket server: ${msg}`]);
         setConnected(false);
       }
     };
@@ -97,7 +97,8 @@ const SshTerminal = () => {
           setLogs(prev => [...prev, "Error: Failed to execute command"]);
         }
       } catch (error) {
-        setLogs(prev => [...prev, "Error: Network error"]);
+        const msg = error instanceof Error ? error.message : String(error);
+        setLogs(prev => [...prev, `Error: Network error (${msg})`]);
       }
     }
   };
@@ -146,7 +147,8 @@ const SshTerminal = () => {
             setConnected(false);
           };
         } catch (error) {
-          setLogs(prev => [...prev, "✗ Failed to reconnect"]);
+          const msg = error instanceof Error ? error.message : String(error);
+          setLogs(prev => [...prev, `✗ Failed to reconnect: ${msg}`]);
           setConnected(false);
         }
       };

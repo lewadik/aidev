@@ -48,7 +48,7 @@ const RemoteDownload = () => {
         toast.error(error.error || "Download failed");
       }
     } catch (error) {
-      toast.error("Download failed. Please try again.");
+      toast.error(`Download failed: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setDownloading(false);
     }

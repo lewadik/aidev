@@ -25,7 +25,7 @@ const FileList = () => {
         toast.error("Failed to fetch files");
       }
     } catch (error) {
-      toast.error("Failed to fetch files");
+      toast.error(`Failed to fetch files: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setLoading(false);
     }
@@ -49,7 +49,7 @@ const FileList = () => {
         toast.error("Failed to download file");
       }
     } catch (error) {
-      toast.error("Failed to download file");
+      toast.error(`Failed to download file: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
@@ -65,7 +65,7 @@ const FileList = () => {
         toast.error("Failed to delete file");
       }
     } catch (error) {
-      toast.error("Failed to delete file");
+      toast.error(`Failed to delete file: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 

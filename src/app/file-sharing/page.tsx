@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FileUpload from "@/components/fileSharing/FileUpload";
 import RemoteDownload from "@/components/fileSharing/RemoteDownload";

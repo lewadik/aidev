@@ -56,8 +56,8 @@ export class S3StorageProvider implements StorageProvider {
       }
       
       return Buffer.concat(chunks);
-    } catch (error: any) {
-      if (error.name === 'NoSuchKey') {
+    } catch (error) {
+      if (error instanceof Error && error.name === 'NoSuchKey') {
         throw new Error(`File not found: ${filename}`);
       }
       throw error;
@@ -106,8 +106,8 @@ export class S3StorageProvider implements StorageProvider {
       
       await this.client.send(command);
       return true;
-    } catch (error: any) {
-      if (error.name === 'NotFound' || error.name === 'NoSuchKey') {
+    } catch (error) {
+      if (error instanceof Error && (error.name === 'NotFound' || error.name === 'NoSuchKey')) {
         return false;
       }
       throw error;

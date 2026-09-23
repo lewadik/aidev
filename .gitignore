@@ -1,0 +1,9 @@
+# Dependencies
+node_modules/
+
+# Build artifacts & caches
+dist/
+build/
+.next/
+out/
+tsconfig.tsbuildinfo
