@@ -83,9 +83,10 @@ Note: Some commands may be restricted for security.`
         error: !!stderr
       });
 
-    } catch (error: any) {
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Command execution failed';
       return NextResponse.json({
-        output: `Error: ${error.message || 'Command execution failed'}`,
+        output: `Error: ${message}`,
         error: true
       });
     }

@@ -1,5 +1,4 @@
 import { StorageProvider, FileMetadata } from '../types';
-import { Readable } from 'stream';
 
 // Basic FTP implementation using Node.js built-in modules
 // For production, consider using 'basic-ftp' package
@@ -28,17 +27,17 @@ export class FTPStorageProvider implements StorageProvider {
     return `${this.config.remotePath}/${filename}`.replace(/\/+/g, '/');
   }
 
-  async upload(filename: string, buffer: Buffer): Promise<void> {
+  async upload(_filename: string, _buffer: Buffer): Promise<void> {
     // This is a placeholder implementation
     // In production, use a proper FTP library like 'basic-ftp'
     throw new Error('FTP provider requires basic-ftp package. Please install: npm install basic-ftp');
   }
 
-  async download(filename: string): Promise<Buffer> {
+  async download(_filename: string): Promise<Buffer> {
     throw new Error('FTP provider requires basic-ftp package. Please install: npm install basic-ftp');
   }
 
-  async delete(filename: string): Promise<void> {
+  async delete(_filename: string): Promise<void> {
     throw new Error('FTP provider requires basic-ftp package. Please install: npm install basic-ftp');
   }
 
@@ -46,7 +45,7 @@ export class FTPStorageProvider implements StorageProvider {
     throw new Error('FTP provider requires basic-ftp package. Please install: npm install basic-ftp');
   }
 
-  async exists(filename: string): Promise<boolean> {
+  async exists(_filename: string): Promise<boolean> {
     throw new Error('FTP provider requires basic-ftp package. Please install: npm install basic-ftp');
   }
 }
@@ -93,7 +92,7 @@ export class FTPStorageProvider implements StorageProvider {
     return client;
   }
 
-  async upload(filename: string, buffer: Buffer): Promise<void> {
+  async upload(_filename: string, _buffer: Buffer): Promise<void> {
     const client = await this.createClient();
     
     try {
@@ -107,7 +106,7 @@ export class FTPStorageProvider implements StorageProvider {
     }
   }
 
-  async download(filename: string): Promise<Buffer> {
+  async download(_filename: string): Promise<Buffer> {
     const client = await this.createClient();
     
     try {
@@ -131,7 +130,7 @@ export class FTPStorageProvider implements StorageProvider {
     }
   }
 
-  async delete(filename: string): Promise<void> {
+  async delete(_filename: string): Promise<void> {
     const client = await this.createClient();
     
     try {
@@ -167,7 +166,7 @@ export class FTPStorageProvider implements StorageProvider {
     }
   }
 
-  async exists(filename: string): Promise<boolean> {
+  async exists(_filename: string): Promise<boolean> {
     const client = await this.createClient();
     
     try {

@@ -44,7 +44,7 @@ const FileUpload = () => {
         toast.error(error.error || "Upload failed");
       }
     } catch (error) {
-      toast.error("Upload failed. Please try again.");
+      toast.error(`Upload failed: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setUploading(false);
     }

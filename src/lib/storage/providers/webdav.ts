@@ -17,12 +17,16 @@ export class WebDAVStorageProvider implements StorageProvider {
     this.config = config;
   }
 
-  private getAuthHeaders(): HeadersInit {
-    const auth = Buffer.from(`${this.config.username}:${this.config.password}`).toString('base64');
+  private getAuthHeaders(): Record<string, string> {
+    const auth = Buffer.from(`${this.config.username}:${this.config.password}`).toString("base64");
     return {
       'Authorization': `Basic ${auth}`,
       'Content-Type': 'application/octet-stream',
     };
+  }
+
+  private getAuthHeader(): string {
+    return this.getAuthHeaders()['Authorization'];
   }
 
   private getFileUrl(filename: string): string {
@@ -50,7 +54,7 @@ export class WebDAVStorageProvider implements StorageProvider {
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        'Authorization': this.getAuthHeaders().Authorization as string,
+        'Authorization': this.getAuthHeader(),
       },
     });
 
@@ -72,7 +76,7 @@ export class WebDAVStorageProvider implements StorageProvider {
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {
-        'Authorization': this.getAuthHeaders().Authorization as string,
+        'Authorization': this.getAuthHeader(),
       },
     });
 
@@ -101,7 +105,7 @@ export class WebDAVStorageProvider implements StorageProvider {
     const response = await fetch(url, {
       method: 'PROPFIND',
       headers: {
-        'Authorization': this.getAuthHeaders().Authorization as string,
+        'Authorization': this.getAuthHeader(),
         'Content-Type': 'application/xml',
         'Depth': '1',
       },
@@ -116,7 +120,7 @@ export class WebDAVStorageProvider implements StorageProvider {
     
     // Basic XML parsing - in production, use a proper XML parser
     const files: FileMetadata[] = [];
-    const responseRegex = /<D:response[^>]*>(.*?)<\/D:response>/gs;
+    const responseRegex = /<D:response[^>]*>([\s\S]*?)<\/D:response>/g;
     let match;
 
     while ((match = responseRegex.exec(xmlText)) !== null) {
@@ -127,9 +131,9 @@ export class WebDAVStorageProvider implements StorageProvider {
         continue;
       }
 
-      const nameMatch = responseContent.match(/<D:displayname[^>]*>(.*?)<\/D:displayname>/s);
-      const sizeMatch = responseContent.match(/<D:getcontentlength[^>]*>(.*?)<\/D:getcontentlength>/s);
-      const modifiedMatch = responseContent.match(/<D:getlastmodified[^>]*>(.*?)<\/D:getlastmodified>/s);
+      const nameMatch = responseContent.match(/<D:displayname[^>]*>([\s\S]*?)<\/D:displayname>/);
+      const sizeMatch = responseContent.match(/<D:getcontentlength[^>]*>([\s\S]*?)<\/D:getcontentlength>/);
+      const modifiedMatch = responseContent.match(/<D:getlastmodified[^>]*>([\s\S]*?)<\/D:getlastmodified>/);
 
       if (nameMatch && sizeMatch) {
         const name = nameMatch[1].trim();
@@ -157,7 +161,7 @@ export class WebDAVStorageProvider implements StorageProvider {
     const response = await fetch(url, {
       method: 'HEAD',
       headers: {
-        'Authorization': this.getAuthHeaders().Authorization as string,
+        'Authorization': this.getAuthHeader(),
       },
     });
 

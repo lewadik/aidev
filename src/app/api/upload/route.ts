@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStorageProvider } from "@/lib/storage/factory";
-import path from "path";
 
 export async function POST(request: NextRequest) {
   try {

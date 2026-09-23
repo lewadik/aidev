@@ -4,10 +4,15 @@ import path from "path";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { filename: string } }
+  { params }: { params: Promise<{ filename: string }> }
 ) {
   try {
-    const filename = decodeURIComponent(params.filename);
+    const { filename: rawFilename } = await params;
+    // Prevent path traversal attacks
+    const filename = path.basename(decodeURIComponent(rawFilename));
+    if (!filename || filename !== decodeURIComponent(rawFilename)) {
+      return NextResponse.json({ error: "Invalid filename" }, { status: 400 });
+    }
     const storage = getStorageProvider();
 
     // Check if file exists
@@ -67,10 +72,15 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { filename: string } }
+  { params }: { params: Promise<{ filename: string }> }
 ) {
   try {
-    const filename = decodeURIComponent(params.filename);
+    const { filename: rawFilename } = await params;
+    // Prevent path traversal attacks
+    const filename = path.basename(decodeURIComponent(rawFilename));
+    if (!filename || filename !== decodeURIComponent(rawFilename)) {
+      return NextResponse.json({ error: "Invalid filename" }, { status: 400 });
+    }
     const storage = getStorageProvider();
 
     // Check if file exists

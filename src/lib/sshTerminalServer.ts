@@ -1,6 +1,6 @@
 import WebSocket, { WebSocketServer } from "ws";
 import * as pty from "node-pty";
-import { Client } from "ssh2";
+import { Client, type ClientChannel } from "ssh2";
 
 const WS_PORT = parseInt(process.env.WS_PORT || "3001");
 const SSH_REMOTE_MODE = process.env.SSH_REMOTE_MODE === "true";
@@ -133,7 +133,7 @@ You can also run most standard shell commands.\r\n`);
     sshClient.on("ready", () => {
       ws.send("SSH connection established\r\n");
 
-      sshClient.shell((err: Error | undefined, stream: any) => {
+      sshClient.shell((err: Error | undefined, stream: ClientChannel) => {
         if (err) {
           ws.send(`SSH shell error: ${err.message}\r\n`);
           ws.close();

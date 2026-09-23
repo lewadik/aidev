@@ -1,7 +1,14 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/files/[filename]/route": "app/api/files/[filename]/route.js",
   "/api/files/route": "app/api/files/route.js",
+  "/api/remote-download/route": "app/api/remote-download/route.js",
   "/api/start-terminal-server/route": "app/api/start-terminal-server/route.js",
+  "/api/storage/config/route": "app/api/storage/config/route.js",
+  "/api/storage/test/route": "app/api/storage/test/route.js",
+  "/api/terminal/route": "app/api/terminal/route.js",
   "/api/upload/route": "app/api/upload/route.js",
   "/file-sharing/page": "app/file-sharing/page.js",
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/storage/page": "app/storage/page.js"
 }

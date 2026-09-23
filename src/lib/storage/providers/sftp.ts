@@ -1,4 +1,5 @@
 import { StorageProvider, FileMetadata } from '../types';
+import type { SFTPWrapper } from 'ssh2';
 import { Client } from 'ssh2';
 import { Readable } from 'stream';
 
@@ -23,7 +24,7 @@ export class SFTPStorageProvider implements StorageProvider {
     this.config = config;
   }
 
-  private async createConnection(): Promise<{ conn: Client; sftp: any }> {
+  private async createConnection(): Promise<{ conn: Client; sftp: SFTPWrapper }> {
     return new Promise((resolve, reject) => {
       const conn = new Client();
       
@@ -39,7 +40,7 @@ export class SFTPStorageProvider implements StorageProvider {
 
       conn.on('error', reject);
 
-      const connectConfig: any = {
+      const connectConfig: Parameters<Client['connect']>[0] = {
         host: this.config.host,
         port: this.config.port,
         username: this.config.username,
@@ -99,8 +100,8 @@ export class SFTPStorageProvider implements StorageProvider {
           resolve(Buffer.concat(chunks));
         });
         
-        readStream.on('error', (err: any) => {
-          if (err.code === 'ENOENT') {
+        readStream.on('error', (err: unknown) => {
+          if (err instanceof Error && 'code' in err && (err as NodeJS.ErrnoException).code === 'ENOENT') {
             reject(new Error(`File not found: ${filename}`));
           } else {
             reject(err);
@@ -119,9 +120,9 @@ export class SFTPStorageProvider implements StorageProvider {
       const remotePath = this.getRemotePath(filename);
       
       await new Promise<void>((resolve, reject) => {
-        sftp.unlink(remotePath, (err: any) => {
+        sftp.unlink(remotePath, (err?: Error | null) => {
           if (err) {
-            if (err.code === 'ENOENT') {
+            if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
               reject(new Error(`File not found: ${filename}`));
             } else {
               reject(err);
@@ -141,7 +142,7 @@ export class SFTPStorageProvider implements StorageProvider {
     
     try {
       return await new Promise<FileMetadata[]>((resolve, reject) => {
-        sftp.readdir(this.config.remotePath, (err: any, files: any[]) => {
+        sftp.readdir(this.config.remotePath, (err: NodeJS.ErrnoException | null | undefined, files: { filename: string; longname: string; attrs: { size: number; mtime: number } }[] = []) => {
           if (err) {
             reject(err);
             return;
@@ -173,7 +174,7 @@ export class SFTPStorageProvider implements StorageProvider {
       const remotePath = this.getRemotePath(filename);
       
       return await new Promise<boolean>((resolve) => {
-        sftp.stat(remotePath, (err: any) => {
+        sftp.stat(remotePath, (err?: Error) => {
           resolve(!err);
         });
       });

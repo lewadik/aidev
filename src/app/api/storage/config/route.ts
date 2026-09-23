@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getStorageConfig, resetStorageProvider } from "@/lib/storage/factory";
 
 export async function GET() {
@@ -48,7 +48,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // Reset storage provider to pick up new environment variables
     resetStorageProvider();
